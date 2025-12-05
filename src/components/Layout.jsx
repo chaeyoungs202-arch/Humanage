@@ -20,7 +20,6 @@ const Layout = ({ children }) => {
     { path: '/payroll', icon: 'fa-dollar-sign', label: 'Payroll' },
     { path: '/performance', icon: 'fa-chart-line', label: 'Performance' },
     { path: '/reports', icon: 'fa-file-alt', label: 'Reports' },
-    { path: '/settings', icon: 'fa-cog', label: 'Settings' },
   ];
 
   return (
@@ -59,10 +58,6 @@ const Layout = ({ children }) => {
           </div>
 
           <div className="header-right">
-            {/* Notifications */}
-            <button className="btn-icon">
-              <i className="fas fa-bell"></i>
-            </button>
 
             {/* User Menu */}
             <div className="user-profile" onClick={() => setShowUserMenu(!showUserMenu)}>

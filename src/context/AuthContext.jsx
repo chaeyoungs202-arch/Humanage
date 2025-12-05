@@ -1,4 +1,6 @@
+// context/AuthContext.jsx - FIXED VERSION with API Integration
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { authAPI } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -17,52 +19,87 @@ export const AuthProvider = ({ children }) => {
 
   // Check for existing session on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
-    }
-    setLoading(false);
+    checkAuth();
   }, []);
 
-  // Login function
+  const checkAuth = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        // Verify token with backend
+        const response = await authAPI.getMe();
+        if (response.success) {
+          setUser(response.user);
+          setIsAuthenticated(true);
+        } else {
+          // Token invalid, clear storage
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
+      }
+    } catch (error) {
+      console.error('Auth check error:', error);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Login function - connects to backend
   const login = async (email, password) => {
     try {
-      // For demo purposes - replace with actual API call
-      // const response = await fetch('http://localhost:5000/api/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, password })
-      // });
-      // const data = await response.json();
+      setLoading(true);
+      
+      // Call backend API
+      const response = await authAPI.login(email, password);
 
-      // Demo login - accepts any email/password
-      const demoUser = {
-        id: '1',
-        name: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
-        email: email,
-        role: 'admin',
-        avatar: email.charAt(0).toUpperCase() + email.split('@')[0].charAt(1).toUpperCase(),
-        department: 'Management',
-        position: 'Administrator',
-        joinDate: new Date().toISOString().split('T')[0]
-      };
-
-      const demoToken = 'demo_token_' + Date.now();
-
-      // Store in localStorage
-      localStorage.setItem('user', JSON.stringify(demoUser));
-      localStorage.setItem('token', demoToken);
-
-      setUser(demoUser);
-      setIsAuthenticated(true);
-
-      return { success: true, user: demoUser };
+      if (response.success) {
+        // Store token and user data
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        
+        setUser(response.user);
+        setIsAuthenticated(true);
+        
+        return { success: true, user: response.user };
+      } else {
+        return { success: false, error: response.message };
+      }
     } catch (error) {
       console.error('Login error:', error);
-      return { success: false, error: 'Login failed' };
+      return { 
+        success: false, 
+        error: error.message || 'Failed to connect to server. Please check if backend is running.' 
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Register function
+  const register = async (userData) => {
+    try {
+      setLoading(true);
+      
+      const response = await authAPI.register(userData);
+
+      if (response.success) {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        
+        setUser(response.user);
+        setIsAuthenticated(true);
+        
+        return { success: true, user: response.user };
+      } else {
+        return { success: false, error: response.message };
+      }
+    } catch (error) {
+      console.error('Register error:', error);
+      return { success: false, error: error.message };
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,12 +111,23 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
-  // Update user profile
-  const updateProfile = (updatedData) => {
-    const updatedUser = { ...user, ...updatedData };
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    setUser(updatedUser);
-    return { success: true, user: updatedUser };
+  // Update user profile - connects to backend
+  const updateProfile = async (updatedData) => {
+    try {
+      const response = await authAPI.updateProfile(updatedData);
+      
+      if (response.success) {
+        const updatedUser = response.user;
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        return { success: true, user: updatedUser };
+      } else {
+        return { success: false, error: response.message };
+      }
+    } catch (error) {
+      console.error('Update profile error:', error);
+      return { success: false, error: error.message };
+    }
   };
 
   // Update settings
@@ -100,6 +148,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     loading,
     login,
+    register,
     logout,
     updateProfile,
     updateSettings,

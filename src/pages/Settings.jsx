@@ -98,13 +98,7 @@ const Settings = () => {
             <i className="fas fa-cog"></i>
             <span>General</span>
           </button>
-          <button 
-            className={`settings-tab ${activeTab === 'notifications' ? 'active' : ''}`}
-            onClick={() => setActiveTab('notifications')}
-          >
-            <i className="fas fa-bell"></i>
-            <span>Notifications</span>
-          </button>
+
           <button 
             className={`settings-tab ${activeTab === 'appearance' ? 'active' : ''}`}
             onClick={() => setActiveTab('appearance')}
@@ -145,9 +139,6 @@ const Settings = () => {
                   onChange={(e) => handleChange('language', e.target.value)}
                 >
                   <option value="en">English</option>
-                  <option value="es">Spanish</option>
-                  <option value="fr">French</option>
-                  <option value="de">German</option>
                 </select>
               </div>
 
@@ -170,21 +161,6 @@ const Settings = () => {
 
               <div className="setting-item">
                 <div className="setting-info">
-                  <label>Date Format</label>
-                  <p>How dates are displayed</p>
-                </div>
-                <select 
-                  value={settings.dateFormat}
-                  onChange={(e) => handleChange('dateFormat', e.target.value)}
-                >
-                  <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-                  <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-                  <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-                </select>
-              </div>
-
-              <div className="setting-item">
-                <div className="setting-info">
                   <label>Time Format</label>
                   <p>12-hour or 24-hour format</p>
                 </div>
@@ -195,106 +171,6 @@ const Settings = () => {
                   <option value="12">12-hour</option>
                   <option value="24">24-hour</option>
                 </select>
-              </div>
-            </div>
-          )}
-
-          {/* Notifications Settings */}
-          {activeTab === 'notifications' && (
-            <div className="settings-section">
-              <h3>Notification Preferences</h3>
-              
-              <div className="setting-item">
-                <div className="setting-info">
-                  <label>Email Notifications</label>
-                  <p>Receive notifications via email</p>
-                </div>
-                <label className="toggle-switch">
-                  <input 
-                    type="checkbox"
-                    checked={settings.emailNotifications}
-                    onChange={(e) => handleChange('emailNotifications', e.target.checked)}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-
-              <div className="setting-item">
-                <div className="setting-info">
-                  <label>Push Notifications</label>
-                  <p>Receive browser push notifications</p>
-                </div>
-                <label className="toggle-switch">
-                  <input 
-                    type="checkbox"
-                    checked={settings.pushNotifications}
-                    onChange={(e) => handleChange('pushNotifications', e.target.checked)}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-
-              <div className="setting-divider"></div>
-              <h4>Notification Types</h4>
-
-              <div className="setting-item">
-                <div className="setting-info">
-                  <label>New Employee Added</label>
-                  <p>Get notified when a new employee joins</p>
-                </div>
-                <label className="toggle-switch">
-                  <input 
-                    type="checkbox"
-                    checked={settings.notifyNewEmployee}
-                    onChange={(e) => handleChange('notifyNewEmployee', e.target.checked)}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-
-              <div className="setting-item">
-                <div className="setting-info">
-                  <label>Attendance Updates</label>
-                  <p>Notifications for attendance records</p>
-                </div>
-                <label className="toggle-switch">
-                  <input 
-                    type="checkbox"
-                    checked={settings.notifyAttendance}
-                    onChange={(e) => handleChange('notifyAttendance', e.target.checked)}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-
-              <div className="setting-item">
-                <div className="setting-info">
-                  <label>Payroll Processing</label>
-                  <p>Alerts for payroll activities</p>
-                </div>
-                <label className="toggle-switch">
-                  <input 
-                    type="checkbox"
-                    checked={settings.notifyPayroll}
-                    onChange={(e) => handleChange('notifyPayroll', e.target.checked)}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-
-              <div className="setting-item">
-                <div className="setting-info">
-                  <label>Performance Reviews</label>
-                  <p>Notifications for review updates</p>
-                </div>
-                <label className="toggle-switch">
-                  <input 
-                    type="checkbox"
-                    checked={settings.notifyPerformance}
-                    onChange={(e) => handleChange('notifyPerformance', e.target.checked)}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
               </div>
             </div>
           )}
